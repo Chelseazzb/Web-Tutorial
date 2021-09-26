@@ -8,16 +8,29 @@ func (m *myhandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("hello world"))
 }
 
+type abouthandler struct{}
+
+func (m *abouthandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("About!"))
+}
+
 func main() {
 
 	//定义handler对象
 	mh := myhandler{}
+	ah := abouthandler{}
 
 	//定义server变量
 	server := http.Server{
 		Addr:    "localhost:8080",
-		Handler: &mh,
+		Handler: nil,
 	}
+
+	http.Handle("/hello", &mh)
+	http.Handle("/about", &ah)
+	http.HandleFunc("/welcome", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Welcome!"))
+	})
 	server.ListenAndServe()
 
 	//http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
